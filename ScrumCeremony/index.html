@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SCRUM Ceremony</title>
+    <meta charset="utf-8" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="container">
+        <h3>All retrospectives</h3>
+
+
+        <div ng-controller="RetrospectiveController as vm" ng-init="vm.search()">
+
+            <form>
+                <div class="form-group">
+                    <label for="dateInput">Search by date:</label>
+                    <input type="text" ng-model="vm.searchDate" style="width: 200px; display: inline-block;" class="form-control" id="dateInput" placeholder="Date">
+                    <button class="btn btn-default" ng-click="vm.search()">Search</button>
+                    <button class="btn btn-primary" ng-click="vm.addNewRetrospective = true">Add New Retrospective</button>
+                </div>
+                <!--<pre>{{ vm | json }}</pre>-->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-md-2">Name</th>
+                            <th class="col-md-3">Summary</th>
+                            <th class="col-md-1">Date</th>
+                            <th class="col-md-2">Participants</th>
+                            <th class="col-md-4">Feedback Items</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="retrospective in vm.retrospectives">
+                            <td>{{ retrospective.name }}</td>
+                            <td>{{ retrospective.summary }}</td>
+                            <td>{{ retrospective.date | date:'yyyy-MM-dd' }}</td>
+                            <td>{{ retrospective.participants.join(', ') }}</td>
+                            <td>
+                                <ul>
+                                    <li ng-repeat="item in retrospective.feedbackItems">
+                                        <div>
+                                            <b>{{item.name}}</b>
+                                        </div>
+                                        <div>Type: {{ item.feedbackType}}</div>
+                                        <div>{{item.body}}</div>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div ng-show="vm.retrospectives.length === 0">No retrospectives found matching the date '{{vm.searchDate}}'</div>
+            </form>
+            <hr />
+            <div ng-show="vm.addNewRetrospective">
+                <h4>Add new retrospective</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <form class="form-horizontal" ng-submit="vm.addRetrospective()">
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-3 control-label">Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="inputName" placeholder="Name" ng-model="vm.form.name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputSummary" class="col-sm-3 control-label">Summary</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="inputSummary" placeholder="Summary" ng-model="vm.form.summary">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputDate" class="col-sm-3 control-label">Date</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="inputDate" placeholder="Date" ng-model="vm.form.date">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputParticipants" class="col-sm-3 control-label">Participants</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="inputParticipants" placeholder="Participants" ng-model="vm.form.participants">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-default">Add Retrospective</button>
+                                    <button type="reset" class="btn btn-default" ng-click="vm.resetAddForm()">Add Another</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal" ng-submit="vm.addRetrospectiveFeedback()">
+                            <div ng-show="vm.retrospectiveAddedSuccessfully">
+                                <h5>Add Feedback item</h5>
+                                <div class="form-group">
+                                    <label for="inputParticipants" class="col-sm-3 control-label">Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="inputFeedbackName" placeholder="Name" ng-model="vm.formFeedback.name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputParticipants" class="col-sm-3 control-label">Body</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="inputFeedbackBody" placeholder="Body" ng-model="vm.formFeedback.body">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputParticipants" class="col-sm-3 control-label">Type</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" ng-model="vm.formFeedback.feedbackType">
+                                            <option value="0">Positive</option>
+                                            <option value="1">Negative</option>
+                                            <option value="2">Idea</option>
+                                            <option value="3">Praise</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-3 col-sm-9">
+                                        <button type="submit" class="btn btn-default">Add Feedback</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+
+    <script src="app/app.js"></script>
+    <script src="app/retrospective.controller.js"></script>
+    <script src="app/retrospective.service.js"></script>
+</body>
+</html>
