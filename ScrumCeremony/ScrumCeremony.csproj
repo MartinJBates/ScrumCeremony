@@ -160,6 +160,8 @@
     <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\Retrospective.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IRetrospectiveService.cs" />
+    <Compile Include="Services\RetrospectiveService.cs" />
     <Compile Include="Utils\ILogger.cs" />
     <Compile Include="Utils\Logger.cs" />
   </ItemGroup>

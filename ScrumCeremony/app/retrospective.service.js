@@ -11,8 +11,7 @@ function retrospectiveService($http) {
     }
 
     this.addRetrospective = function (formData) {
-        console.log(formData);
-        var promise = $http.post('/api/retrospective/addretrospective', formData).then(function (response) {
+        var promise = $http.post('/api/retrospective', formData).then(function (response) {
             return response.data;
         });
         return promise;
@@ -20,7 +19,7 @@ function retrospectiveService($http) {
 
     this.addRetrospectiveFeedback = function (retrospectiveName, formData) {
         console.log(formData);
-        var promise = $http.post('/api/retrospective/addretrospectivefeedback?name=' + encodeURIComponent(retrospectiveName), formData).then(function (response) {
+        var promise = $http.post('/api/retrospective/addfeedback?name=' + encodeURIComponent(retrospectiveName), formData).then(function (response) {
             return response.data;
         });
         return promise;

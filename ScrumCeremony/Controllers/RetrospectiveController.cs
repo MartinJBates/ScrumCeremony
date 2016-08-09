@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Http;
-using System.Web.UI.WebControls;
 using ScrumCeremony.Models;
+using ScrumCeremony.Services;
 using ScrumCeremony.Utils;
 
 namespace ScrumCeremony.Controllers
@@ -14,53 +11,66 @@ namespace ScrumCeremony.Controllers
     public class RetrospectiveController : ApiController
     {
         private readonly ILogger logger;
+        private readonly IRetrospectiveService retrospectiveService;
 
         public RetrospectiveController()
         {
             this.logger = new Logger();
+            this.retrospectiveService = new RetrospectiveService();
         }
 
         [Route("")]
-        public IEnumerable<Retrospective> Get()
+        public IHttpActionResult Get()
         {
-            return Database.GetRetrospectives();
+            return this.Ok(this.retrospectiveService.GetRetrospectives());
         }
 
         [Route("{date}")]
-        public IEnumerable<Retrospective> GetByDate(string date)
+        public IHttpActionResult GetByDate(string date)
         {
-            return Database.GetRetrospectivesByDate(date);
+            return this.Ok(this.retrospectiveService.GetRetrospectivesByDate(date));
         }
 
-        [Route("addretrospective")]
+        /*
+         * I chose to add the "add" prefix so you could distinctively see
+         * what this API route was doing. For example, if a user was given
+         * this url to use, they'd instantly know it was to add a new one.
+         * If I didn't have the "add" and had POST/PUT/DELETE verbs then 
+         * the consumer might not know what they'd have to use. This would
+         * be fixed via documentation however. My view is there is two ways
+         * this can be done depending on the designer of the API.    
+        */
+        [Route("")]
         [HttpPost]
-        public bool AddRetrospective(Retrospective retrospective)
+        public IHttpActionResult AddRetrospective(Retrospective retrospective)
         {
             try
             {
-                Database.AddNewRetrospective(retrospective);
-                return true;
+                this.retrospectiveService.AddRetrospective(retrospective);
+                return this.Created("/api/retrospective", retrospective);
             }
             catch (Exception ex)
             {
                 this.logger.Log(ex, "Couldn't add feedback to retrospective");
-                return false;
+                return this.InternalServerError(ex);
             }
         }
 
 
-        [Route("addretrospectivefeedback")]
+        [Route("addfeedback")]
         [HttpPost]
-        public void AddRetrospectiveFeedback(Feedback feedback)
+        public IHttpActionResult AddRetrospectiveFeedback(Feedback feedback)
         {
             try
             {
                 string name = HttpUtility.ParseQueryString(Request.RequestUri.Query).Get("name");
-                Database.AddFeedbackToRetrospective(name, feedback);
+                this.retrospectiveService.AddRetrospectiveFeedback(name, feedback);
+                return this.Created("/api/retrospective/addfeedback", feedback);
             }
             catch (Exception ex)
             {
                 this.logger.Log(ex, "Couldn't add feedback to retrospective");
+                return this.InternalServerError(ex);
             }
         }
     }
