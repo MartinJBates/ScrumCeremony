@@ -32,7 +32,7 @@ namespace ScrumCeremony.Controllers
         }
 
         /*
-         * I chose to add the "add" prefix so you could distinctively see
+         * I deliberated about adding the "add" prefix so you could distinctively see
          * what this API route was doing. For example, if a user was given
          * this url to use, they'd instantly know it was to add a new one.
          * If I didn't have the "add" and had POST/PUT/DELETE verbs then 
